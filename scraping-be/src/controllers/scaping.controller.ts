@@ -13,7 +13,7 @@ class ScapingController {
       const userId = (req as IRequest).userId;
 
       // Scrape the data from the URL
-      const url = req.body.url as string;
+       const url = req.body.url?.[0] as string;
       logger.info('url:', url);
 
       let result: ScrapingUrlsResult;
@@ -34,8 +34,7 @@ class ScapingController {
         } else {
           const media = await scrapingService.upsertMedia({ url } as Media);
           await userService.createUserMedia(userId, media.id);
-          const a = await scrapingService.scrapeUrlContent(media);
-          console.log(a)
+          await scrapingService.scrapeUrlContent(media);
           result = { url, images: [], videos: [], status: MediaStatusEnum.PENDING };
         }
       }
