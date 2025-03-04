@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  pending
+  processing
+  completed
+  failed
+}
+
+model User {
+  id        Int         @id @default(autoincrement())
+  username  String      @unique @map("user_name")
+  password  String
+  userMedia UserMedia[]
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Media {
+  id        Int         @id @default(autoincrement())
+  url       String      @unique
+  videos    Json        @default("[]")
+  userMedia UserMedia[]
+  status    Status      @default(pending)
+  createdAt DateTime    @default(now()) @map("created_at")
+  updatedAt DateTime    @default(now()) @updatedAt @map("updated_at")
+
+  @@index([url])
+  @@map("media")
+}
+
+model UserMedia {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  mediaId   Int      @map("media_id")
+  user      User     @relation(fields: [userId], references: [id])
+  media     Media    @relation(fields: [mediaId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([userId, mediaId])
+  @@index([userId, mediaId])
+  @@map("user_media")
+}
