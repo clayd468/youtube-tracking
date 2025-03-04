@@ -13,7 +13,7 @@ class ScapingController {
       const userId = (req as IRequest).userId;
 
       // Scrape the data from the URL
-       const url = req.body.url?.[0] as string;
+      const url = req.body.url?.[0] as string;
       logger.info('url:', url);
 
       let result: ScrapingUrlsResult;
