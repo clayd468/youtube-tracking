@@ -1,0 +1,1 @@
+export const REGISTER_SUCCESS = 'Successfully registered! You can now log in.';

@@ -16,15 +16,7 @@ export const baseValidation = {
 
 export const createScrapingUrlsValidation = {
   body: Joi.object({
-    url: Joi.array()
-      .items(
-        Joi.string().required().messages({
-          'string.base': `Each URL should be a type of text`,
-          // 'string.uri': `Each URL should be a valid URI`,
-          'any.required': `Each URL is a required field`,
-        }),
-      )
-      .max(MAX_URLS)
+    url: Joi.string()
       .required()
       .messages({
         'array.base': `URLs should be an array`,
