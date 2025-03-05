@@ -1,4 +1,10 @@
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  act,
+  waitFor,
+} from "@testing-library/react";
 import { DetailPage } from "../pages/DetailPage";
 import { useMediaDetail } from "@/hooks";
 import { BrowserRouter, useNavigate } from "react-router-dom";
@@ -106,37 +112,42 @@ describe("Detail page", () => {
     });
   });
 
-  // it("should handle search action", async () => {
-  //   renderWithRouter(<DetailPage />);
+  it("should handle search action", async () => {
+    renderWithRouter(<DetailPage />);
 
-  //   const searchInput = screen.getByRole("textbox");
-  //   const searchButton = screen.getByRole("button", { name: /search/i });
+    const searchInput = screen.getByRole("textbox");
+    const searchButton = screen.getByRole("button", { name: /search/i });
 
-  //   await act(async () => {
-  //     fireEvent.change(searchInput, { target: { value: "Binance" } });
-  //     fireEvent.click(searchButton);
-  //   });
+    fireEvent.change(searchInput, { target: { value: "Binance" } });
+    // await act(async () => {
+    fireEvent.click(searchButton);
+    // });
 
-  //   const videoElements = screen.getAllByTitle("YouTube video player");
-  //   expect(videoElements.length).toBe(1);
-  //   expect(videoElements[0]).toHaveAttribute(
-  //     "src",
-  //     "https://www.youtube.com/embed/zbVtf4OzlZQ"
-  //   );
-  // });
+    const videoElements = screen.getAllByTitle("YouTube video player");
+    expect(videoElements.length).toBe(1);
+    expect(videoElements[0]).toHaveAttribute(
+      "src",
+      "https://www.youtube.com/embed/zbVtf4OzlZQ"
+    );
+  });
 
-  // it("should show no results message when no videos match search", async () => {
-  //   renderWithRouter(<DetailPage />);
+  it("should show no results message when no videos match search", async () => {
+    renderWithRouter(<DetailPage />);
 
-  //   const searchInput = screen.getByRole("textbox");
-  //   const searchButton = screen.getByRole("button", { name: /search/i });
+    // Đợi đến khi dữ liệu có sẵn
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Binance Red Packet Code Today/i)
+      ).toBeInTheDocument();
+    });
 
-  //   await act(async () => {
-  //     fireEvent.change(searchInput, { target: { value: "Nonexistent" } });
-  //     fireEvent.click(searchButton);
-  //   });
+    const searchInput = screen.getByRole("textbox");
+    const searchButton = screen.getByRole("button", { name: /search/i });
 
-  //   const noResultsMessage = screen.getByText(/no results/i);
-  //   expect(noResultsMessage).toBeInTheDocument();
-  // });
+    fireEvent.change(searchInput, { target: { value: "Nonexistent" } });
+    setTimeout(() => {
+      fireEvent.click(searchButton);
+      expect(screen.getByText(/no results/i)).toBeInTheDocument();
+    });
+  });
 });

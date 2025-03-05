@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMediaDetail } from "@/hooks";
 import { useNavigate } from "react-router-dom";
 import { VideoGrid, Button, SearchBar } from "@/components/ui";
 
 export const DetailPage = () => {
   const { videos } = useMediaDetail();
-  const [videosShow, setVideoShows] = useState<IVideos[]>(videos);
+  const [videosShow, setVideoShows] = useState<IVideos[]>([]);
   const [txtSearch, setTxtSearch] = useState<string>("");
 
   const navigate = useNavigate();
   useEffect(() => {
-    if (videos && videos.length > 0) {
-      setVideoShows(videos);
+    if (videos.length > 0) {
+      setVideoShows((prevVideos) => {
+        if (JSON.stringify(prevVideos) === JSON.stringify(videos)) {
+          return prevVideos;
+        }
+
+        return [...videos];
+      });
     }
+    
   }, [videos]);
 
   const handleBackToHome = () => {
@@ -20,7 +27,7 @@ export const DetailPage = () => {
   };
 
   const handleSearch = () => {
-    if (!videos) return;
+    if (!videos || videos.length === 0) return;
   
     const searchQuery = txtSearch?.trim()?.toLowerCase();
     
@@ -28,8 +35,6 @@ export const DetailPage = () => {
       setVideoShows(videos);
       return;
     }
-
-    console.log(2222222222, searchQuery, videos)
   
     setVideoShows(
       videos.filter((video) => 
